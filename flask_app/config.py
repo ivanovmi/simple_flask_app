@@ -1,8 +1,6 @@
-import os
-
-#MONGODB_HOST = os.getenv("MONGODB_PORT_27017_TCP_ADDR", "localhost")
-#MONGODB_PORT = int(os.getenv("MONGODB_PORT_27017_TCP_PORT", "27017"))
-#MONGODB_DB = ""
+MYSQL_USER = "flaskuser"
+MYSQL_DB = "flaskapp"
+MYSQL_USE_UNICODE = True
 SECRET_KEY = "Secrets"
 ADMIN_USERNAME = "admin"
 ADMIN_PASSWORD = "admin"
