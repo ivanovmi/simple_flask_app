@@ -7,10 +7,13 @@ from flask import render_template
 from flask import request
 from flask import session
 from flask import url_for
+from flaskext.mysql import MySQL
 import forms
 
+mysql = MySQL()
 app = Flask('flask_app')
 app.config.from_object('flask_app.config')
+mysql.init_app(app)
 
 
 @app.route('/')
@@ -20,11 +23,10 @@ def root():
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
-    # TODO: Convenient redirect.
     form = forms.LoginForm()
     if (form.validate_on_submit() and
-        form.username.data == app.config['ADMIN_USERNAME'] and
-        form.password.data == app.config['ADMIN_PASSWORD']):
+            form.username.data == app.config['ADMIN_USERNAME'] and
+            form.password.data == app.config['ADMIN_PASSWORD']):
         session['username'] = form.username.data
         return redirect(url_for('root'))
     return render_template('login.html', form=form)
@@ -56,5 +58,27 @@ def admin_required(f):
 @app.route('/admin/')
 @admin_required
 def admin():
-    # TODO: Validation error handling.
     return render_template('admin.html')
+
+
+@app.route('/admin/insert', methods=['GET', 'POST'])
+@admin_required
+def insert_into_table():
+
+    form = forms.InsertForm()
+
+    if form.is_submitted():
+        if form.cancel.data:
+            return redirect(url_for('admin'))
+        elif form.validate():
+            cur = mysql.get_db().cursor()
+            text = form.text.data
+            print text
+            date = form.date.data.strftime('%Y-%m-%d')
+            done = form.done.data
+            sql_query = 'INSERT INTO organizer (text,date,done) VALUES ("{text}", "{date}", {done})'.format(text=str(text), date=str(date), done=done)
+            cur.execute(sql_query)
+
+            return redirect(url_for('admin'))
+
+    return render_template('insert_values.html', form=form)

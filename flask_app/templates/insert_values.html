@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Вставить новое задание:</h1>
+<form method="POST" action={{ request.path }}>
+  {{ form.hidden_tag() }}
+  <div>{{ form.text.label }} {{ form.text }}</div>
+  <div>{{ form.date.label }} {{ form.date(class='datepicker') }}</div>
+  <div>{{ form.done.label }} {{ form.done }}</div>
+  <div class="button">{{ form.submit }}</div>
+  <div class="button">{{ form.cancel }}</div>
+
+</form>
+{% endblock %}

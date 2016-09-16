@@ -1,5 +1,6 @@
-MYSQL_USER = "flaskuser"
-MYSQL_DB = "flaskapp"
+MYSQL_DATABASE_USER = "flaskuser"
+MYSQL_DATABASE_DB = "flaskapp"
+MYSQL_DATABASE_HOST = "localhost"
 MYSQL_USE_UNICODE = True
 SECRET_KEY = "Secrets"
 ADMIN_USERNAME = "admin"
