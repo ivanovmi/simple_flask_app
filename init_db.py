@@ -8,7 +8,7 @@ def main():
     sql_query = 'DROP DATABASE IF EXISTS flaskapp;'
     cur.execute(sql_query)
     print 'Create flaskapp db'
-    sql_query = 'CREATE DATABASE flaskapp; USE flaskapp;'
+    sql_query = 'CREATE DATABASE flaskapp CHARACTER SET utf8; USE flaskapp;'
     cur.execute(sql_query)
     print 'Create organizer table'
     sql_query = 'CREATE TABLE organizer(id int NOT NULL AUTO_INCREMENT, text TEXT(500), date DATE, done BOOL, PRIMARY KEY(id));'

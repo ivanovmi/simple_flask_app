@@ -1,3 +1,4 @@
-Flask
-Flask-WTF
-flask-mysql
+Flask>=0.11.1
+Flask-WTF>=0.11
+Flask-MySQL>=1.4.0
+MySQL-Python>=1.2.5

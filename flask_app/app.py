@@ -1,3 +1,6 @@
+# -*- coding: UTF-8 -*-
+
+from datetime import datetime
 import functools
 
 from flask import Flask
@@ -71,14 +74,27 @@ def insert_into_table():
         if form.cancel.data:
             return redirect(url_for('admin'))
         elif form.validate():
-            cur = mysql.get_db().cursor()
+            db = mysql.get_db()
+            cur = db.cursor()
             text = form.text.data
-            print text
             date = form.date.data.strftime('%Y-%m-%d')
             done = form.done.data
-            sql_query = 'INSERT INTO organizer (text,date,done) VALUES ("{text}", "{date}", {done})'.format(text=str(text), date=str(date), done=done)
+            sql_query = u'INSERT INTO organizer (text,date,done) VALUES ("{text}", "{date}", {done});'.format(text=unicode(text), date=str(date), done=done)
             cur.execute(sql_query)
+            db.commit()
 
             return redirect(url_for('admin'))
 
     return render_template('insert_values.html', form=form)
+
+
+@app.route('/views/')
+@admin_required
+def views():
+    db = mysql.get_db()
+    cur = db.cursor()
+    cur.execute('SELECT * FROM organizer;')
+    mysql_data = cur.fetchall()
+    time_now = datetime.now().date()
+
+    return render_template('views.html', mysql_data=mysql_data, time_now=time_now)

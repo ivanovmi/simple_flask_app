@@ -3,7 +3,6 @@
 from flask_wtf import Form
 from wtforms import PasswordField
 from wtforms import BooleanField
-from wtforms import SelectMultipleField
 from wtforms import StringField
 from wtforms import SubmitField
 from wtforms.fields.html5 import DateField
@@ -19,8 +18,6 @@ class LoginForm(Form):
 class InsertForm(Form):
     text = StringField(u'Текст заметки', [InputRequired()])
     date = DateField(u'Выполнить до', format='%Y-%m-%d')
-    #date = StringField(u'Выполнить до', [InputRequired()])
     done = BooleanField(u'Выполнено?')
     submit = SubmitField(u'Создать')
     cancel = SubmitField(u'Отмена')
-    #dt =

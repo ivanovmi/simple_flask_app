@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<table>
+    <tr>
+        <th>
+            ID
+        </th>
+        <th>
+            Текст
+        </th>
+        <th>
+            Времени до выполнения
+        </th>
+        <th>
+            Выполнено?
+        </th>
+    </tr>
+    {% for row in mysql_data %}
+    <tr>
+        <td>
+            {{ row[0] }}
+        </td>
+        <td>
+            {{ row[1] }}
+        </td>
+        <td>
+            {{ row[2] - time_now }}
+        </td>
+        <td>
+            {% if row[3]==0 %}
+                <i class="fa fa-times" aria-hidden="false"></i>
+            {% else %}
+                <i class="fa fa-check" aria-hidden="false"></i>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}.
