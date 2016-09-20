@@ -11,7 +11,7 @@ def main():
     sql_query = 'CREATE DATABASE flaskapp CHARACTER SET utf8; USE flaskapp;'
     cur.execute(sql_query)
     print 'Create organizer table'
-    sql_query = 'CREATE TABLE organizer(id int NOT NULL AUTO_INCREMENT, text TEXT(500), date DATE, done BOOL, PRIMARY KEY(id));'
+    sql_query = 'CREATE TABLE organizer(id int NOT NULL AUTO_INCREMENT, text TEXT(500), date DATE, done BOOL, PRIMARY KEY(id), FULLTEXT idx (text));'
     cur.execute(sql_query)
 
 if __name__ == '__main__':

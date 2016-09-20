@@ -11,6 +11,8 @@ from flask import request
 from flask import session
 from flask import url_for
 from flaskext.mysql import MySQL
+from wtforms import Label
+
 import forms
 
 mysql = MySQL()
@@ -21,7 +23,7 @@ mysql.init_app(app)
 
 @app.route('/')
 def root():
-    return render_template('base.html')
+    return redirect(url_for('views'))
 
 
 @app.route('/login/', methods=['GET', 'POST'])
@@ -43,9 +45,17 @@ def logout():
 
 @app.route('/search')
 def search():
+
+    db = mysql.get_db()
+    cur = db.cursor()
+
     query = request.args.get('search')
-    matches = {}
-    return render_template('search.html', matches=matches)
+    sql_query = u"SELECT * FROM organizer WHERE text LIKE '%{query}%';".format(query=query)
+    cur.execute(sql_query)
+    matches = cur.fetchall()
+    time_now = datetime.now().date()
+
+    return render_template('search.html', matches=matches, time_now=time_now)
 
 
 def admin_required(f):
@@ -58,13 +68,7 @@ def admin_required(f):
     return decorated_function
 
 
-@app.route('/admin/')
-@admin_required
-def admin():
-    return render_template('admin.html')
-
-
-@app.route('/admin/insert', methods=['GET', 'POST'])
+@app.route('/insert', methods=['GET', 'POST'])
 @admin_required
 def insert_into_table():
 
@@ -72,7 +76,7 @@ def insert_into_table():
 
     if form.is_submitted():
         if form.cancel.data:
-            return redirect(url_for('admin'))
+            return redirect(url_for('views'))
         elif form.validate():
             db = mysql.get_db()
             cur = db.cursor()
@@ -83,7 +87,7 @@ def insert_into_table():
             cur.execute(sql_query)
             db.commit()
 
-            return redirect(url_for('admin'))
+            return redirect(url_for('views'))
 
     return render_template('insert_values.html', form=form)
 
@@ -98,3 +102,36 @@ def views():
     time_now = datetime.now().date()
 
     return render_template('views.html', mysql_data=mysql_data, time_now=time_now)
+
+
+@app.route('/edit/<int:ids>/', methods=['GET', 'POST'])
+@admin_required
+def edit(ids):
+
+    sql_query = u'SELECT * FROM organizer WHERE id = {ids}'.format(ids=ids)
+
+    db = mysql.get_db()
+    cur = db.cursor()
+    cur.execute(sql_query)
+    mysql_data = cur.fetchall()
+
+    form = forms.InsertForm(text=mysql_data[0][1],
+                            date=mysql_data[0][2],
+                            done=mysql_data[0][3])
+    form.submit.label = Label('submit', u'Обновить')
+
+    if form.is_submitted():
+        if form.cancel.data:
+            return redirect(url_for('views'))
+        elif form.validate():
+            db = mysql.get_db()
+            cur = db.cursor()
+            text = form.text.data
+            date = form.date.data.strftime('%Y-%m-%d')
+            done = form.done.data
+            sql_query = u'UPDATE organizer SET text = "{text}", date = "{date}", done = {done} WHERE id = {ids};'.format(text=unicode(text), date=str(date), done=done, ids=ids)
+            cur.execute(sql_query)
+            db.commit()
+            return redirect(url_for('views'))
+
+    return render_template('edit.html', form=form, ids=ids)

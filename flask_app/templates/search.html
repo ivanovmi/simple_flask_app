@@ -19,7 +19,7 @@
 
         </th>
     </tr>
-    {% for row in mysql_data %}
+    {% for row in matches %}
     <tr>
         <td>
             {{ row[0] }}
@@ -43,7 +43,4 @@
     </tr>
     {% endfor %}
 </table>
-
-<a href="{{ url_for('insert_into_table') }}">Вставка нового значения</a>
-
-{% endblock %}.
+{% endblock %}
